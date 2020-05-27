@@ -9,9 +9,10 @@ import (
 type Uploader struct {
     Client *oss.Client
     Bucket *oss.Bucket
-    Dir string
-
-
+    LocalPrefix string
+    ObjectPrefix string
+    Remain int
+    Done string
 }
 
 func handleError(err error) {
@@ -46,7 +47,6 @@ func (uploader*Uploader) ShouldUpload(srcFilePath string, dstFilePath string) bo
         if err != nil {
         handleError(err)
         }
-        fmt.Println("object Meta: ", props)
         dstSize, err := strconv.ParseInt(props["Content-Length"][0], 10, 64)
         if err != nil {
             handleError(err)
@@ -66,7 +66,11 @@ func (uploader*Uploader) ShouldUpload(srcFilePath string, dstFilePath string) bo
     }
 
 }
+func (uploader *Uploader) Upload (srcFilePath string, dstFilePath string) error {
+    err := uploader.Bucket.UploadFile(dstFilePath, srcFilePath, 100*1024, oss.Routines(3), oss.Checkpoint(true, ""))
+    return err
 
+}
 func GetLocalFileSize(filePath string) int64 {
          f, err := os.Open(filePath)
          defer f.Close()
@@ -93,3 +97,5 @@ func GetLocalFileModTime(filePath string) int64 {
          }
          return info.ModTime().Unix()
 }
+
+
