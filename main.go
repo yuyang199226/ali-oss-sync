@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"log"
+	"github.com/colinmarc/hdfs"
 	"os"
 	"strings"
 	//    "strconv"
@@ -35,6 +36,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+    hdfsClient, err := hdfs.New("manage13.aibee.cn:8020")
+    if err != nil {
+		log.Fatal(err)
+    }
+    hdfsDir, err := hdfsClient.ReadDir("/prod")
+    if err != nil {
+		log.Fatal(err)
+    }
+    fmt.Println(hdfsDir)
 	bucketObj, err := client.Bucket(*bucket)
 	uploader := uploader.Uploader{client, bucketObj, *localprefix, *objectprefix, *remain, *done}
 
