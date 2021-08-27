@@ -40,6 +40,7 @@ func main() {
     if err != nil {
 		log.Fatal(err)
     }
+    fmt.Println(">>>>")
     hdfsDir, err := hdfsClient.ReadDir("/prod")
     if err != nil {
 		log.Fatal(err)
